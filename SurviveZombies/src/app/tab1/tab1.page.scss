@@ -1,16 +1,18 @@
-ion-segment-view {
-    height: 150px;
+ion-segment {
+  width: 100% !important;
 }
 
 ion-segment-content {
-display: flex;
-align-items: center;
-justify-content: center;
+  justify-content: center;
 }
 
-.apples {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    overflow: visible;
+#add-stock-button {
+  height: 36px;
+  width: 367px;
+}
+
+.form-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
