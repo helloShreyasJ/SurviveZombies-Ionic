@@ -1,0 +1,7 @@
+{
+  "name": "SurviveZombies",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}

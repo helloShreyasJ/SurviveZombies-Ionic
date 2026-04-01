@@ -1,0 +1,48 @@
+<ion-header [translucent]="true">
+
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">Inventory</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <ion-segment value="default">
+    <ion-segment-button value="default" contentId="displayItems">
+      <ion-label>Items ({{itemCount}})</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="segment" contentId="addItems">
+      <ion-label>Add Items</ion-label>
+    </ion-segment-button>
+  </ion-segment>
+
+  <ion-segment-view>
+    <ion-segment-content id="displayItems">
+      <ion-list>
+        @for (item of items; track item) {
+          <ion-label>
+            <h2>{{item.name}}</h2>
+            <p>{{item.desc}}</p>
+          </ion-label>
+          <ion-badge>{{item.qty}}</ion-badge>
+        }  
+      </ion-list>
+    </ion-segment-content>
+    <ion-segment-content id="addItems">
+        <ion-item>
+          <ion-input label="Name" placeholder="Enter name" labelPlacement="stacked" [clearInput]="true" [(ngModel)]="itemName"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-input label="Quantity" placeholder="Enter quantity" labelPlacement="stacked" [clearInput]="true" [(ngModel)]="itemQty"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-input label="Description" placeholder="Enter description" labelPlacement="stacked" [clearInput]="true" [(ngModel)]="itemDesc"></ion-input>
+        </ion-item>
+      <ion-button (click)="addToStock()">add to stock</ion-button>
+
+    </ion-segment-content>
+  </ion-segment-view>
+  
+</ion-content>
