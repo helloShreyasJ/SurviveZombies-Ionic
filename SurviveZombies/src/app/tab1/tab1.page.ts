@@ -1,10 +1,9 @@
 import { Component } from '@angular/core';
 import { IonButton, IonList, IonItem, IonSegmentContent, IonSegmentView,
           IonLabel, IonSegment, IonSegmentButton, IonHeader,
-          IonToolbar, IonTitle, IonContent, IonBadge, IonInput, IonText, IonAlert } from '@ionic/angular/standalone';
+          IonToolbar, IonTitle, IonContent, IonInput, IonText,
+          IonAlert, IonModal, IonButtons } from '@ionic/angular/standalone';
 import { FormsModule } from '@angular/forms';
-import type { OverlayEventDetail } from '@ionic/core';
-
 
 export interface Item  {
   name: string;
@@ -16,9 +15,11 @@ export interface Item  {
   selector: 'app-tab1',
   templateUrl: 'tab1.page.html',
   styleUrls: ['tab1.page.scss'],
-  imports: [IonAlert, IonText, FormsModule, IonHeader, IonToolbar, IonTitle, IonContent, IonLabel, IonSegment,
+  imports: [IonAlert, IonText, FormsModule, IonHeader,
+    IonContent, IonLabel, IonSegment,
     IonSegmentButton, IonSegmentView,
-    IonSegmentContent, IonList, IonItem, IonBadge, IonInput, IonButton ],
+    IonSegmentContent, IonList, IonItem, IonInput,
+    IonButton, IonModal, IonButtons, IonToolbar, IonTitle],
 })
 
 export class Tab1Page {
@@ -28,22 +29,45 @@ export class Tab1Page {
   itemName: string = "No name provided";
   itemQty: number = 1;
   itemDesc?: string = "No description provided";
-  quantityAlert: boolean = false;
-
-  items: Item[] = [
-  ];
+  isQuantityAlert: boolean = false;
+  isItemModalOpen: boolean = false;
+  isEditingItem: boolean = false;
+  activeItem: Item = {"name": "", "qty": 0, "desc": ""};
+  items: Item[] = [];
   itemCount:number = this.items.length;
 
   addToStock = () => {
     if (this.itemQty <= 0) {
-      this.quantityAlert = true;
+      this.isQuantityAlert = true;
       return;
     }
     this.items.push({"name": this.itemName, "qty": this.itemQty, "desc": this.itemDesc});    
     this.itemCount++;
   }
 
-  setResult(event: CustomEvent<OverlayEventDetail>) {
-    this.quantityAlert = false;
+  setResult = () => {
+    this.isQuantityAlert = false;
+  }
+
+  openItemModal = (selectedItem: Item) => {
+    this.activeItem = selectedItem;
+    this.isItemModalOpen = true;
+  }
+
+  closeItemModal = () => {
+    this.isItemModalOpen = false;
+    
+    setTimeout(() => {
+      this.isEditingItem = false;
+    }, 200);  }
+
+  removeItem = () => {
+    this.items = this.items.filter(item => item !== this.activeItem);
+    this.itemCount = this.items.length;
+    this.closeItemModal();
+  }
+
+  editDetails = () => {
+    this.isEditingItem = !this.isEditingItem;
   }
 }

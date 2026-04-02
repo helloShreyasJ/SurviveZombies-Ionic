@@ -19,7 +19,7 @@
     <ion-segment-content id="display-items">
       <ion-list>
         @for (item of items; track item) {
-          <ion-item>
+          <ion-item button="true" detail="true" (click)="openItemModal(item)">
             <ion-label>{{ item.name }}</ion-label>
             
             <ion-text slot="end">{{ item.qty }}</ion-text>
@@ -45,11 +45,49 @@
   </ion-segment-view>
 
   <ion-alert
-    [isOpen]="quantityAlert"
+    [isOpen]="isQuantityAlert"
     header="Invalid Entry"
     message="Quantity should be greater than 0"
     [buttons]="alertButtons"
-    (didDismiss)="setResult($event)"
+    (didDismiss)="setResult()"
   ></ion-alert>
-  
+
+  <ion-modal [isOpen]="isItemModalOpen" (didDismiss)="closeItemModal()">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-buttons slot="end">
+            <ion-button (click)="closeItemModal()">Close</ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+
+      <ion-content class="ion-padding">
+        <h2>{{activeItem.name}}</h2>
+        <p>{{activeItem.desc}}</p>
+
+        
+
+        <div class="form-wrapper">
+          @if (!isEditingItem) {
+            <ion-button id="edit-details-button" (click)="editDetails()">EDIT DETAILS</ion-button>
+          }
+
+          @if (isEditingItem) {
+            <ion-item>
+              <ion-input label="Name" labelPlacement="stacked" [(ngModel)]="activeItem.name"></ion-input>
+            </ion-item>
+            <ion-item>
+              <ion-input type="number" label="Amount" labelPlacement="stacked" [(ngModel)]="activeItem.qty"></ion-input>
+            </ion-item>
+            <ion-item>
+              <ion-input label="Description" labelPlacement="stacked" [(ngModel)]="activeItem.desc"></ion-input>
+            </ion-item>
+            <ion-button id="save-changes-button" expand="block" (click)="editDetails()">SAVE CHANGES</ion-button>
+          }
+          <ion-button id="remove-item-button" expand="block" (click)="removeItem()">REMOVE ITEM</ion-button>
+        </div>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
 </ion-content>

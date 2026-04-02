@@ -16,6 +16,31 @@ ion-segment-content {
   justify-content: center;
 }
 
+#remove-item-button {
+  height: 36px;
+  width: 367px;
+  --background: #C1D7CB;
+  --color: #104911;
+  --background-activated: #1A751B;
+  align-self: center;
+}
+
+#save-changes-button {
+  height: 36px;
+  width: 367px;
+  --background: #104911;
+  --background-activated: #1A751B;
+  align-self: center;
+}
+
+#edit-details-button {
+  height: 36px;
+  width: 367px;
+  --background: #104911;
+  --background-activated: #1A751B;
+  align-self: center;
+}
+
 #add-stock-button {
   height: 36px;
   width: 367px;
