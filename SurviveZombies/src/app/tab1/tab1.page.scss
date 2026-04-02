@@ -1,16 +1,57 @@
-ion-segment-view {
-    height: 150px;
+ion-content {
+  --background: #E6EFE9;
+}
+
+ion-segment {
+  --indicator-color: #104911; 
+}
+
+ion-segment-button {
+  --color-checked: #104911; 
+  
+  --color: #666666; 
 }
 
 ion-segment-content {
-display: flex;
-align-items: center;
-justify-content: center;
+  justify-content: center;
 }
 
-.apples {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    overflow: visible;
+#remove-item-button {
+  height: 36px;
+  width: 367px;
+  --background: #C1D7CB;
+  --color: #104911;
+  --background-activated: #1A751B;
+  align-self: center;
+}
+
+#save-changes-button {
+  height: 36px;
+  width: 367px;
+  --background: #104911;
+  --background-activated: #1A751B;
+  align-self: center;
+}
+
+#edit-details-button {
+  height: 36px;
+  width: 367px;
+  --background: #104911;
+  --background-activated: #1A751B;
+  align-self: center;
+}
+
+#add-stock-button {
+  height: 36px;
+  width: 367px;
+  --background: #104911;
+  --background-activated: #1A751B;
+  margin: 8px 0 0 0;
+  align-self: center;
+}
+
+.form-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }

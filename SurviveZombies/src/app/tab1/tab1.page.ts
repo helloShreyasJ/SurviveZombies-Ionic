@@ -1,10 +1,8 @@
 import { Component } from '@angular/core';
 import { IonButton, IonList, IonItem, IonSegmentContent, IonSegmentView,
           IonLabel, IonSegment, IonSegmentButton, IonHeader,
-          IonToolbar, IonTitle, IonContent, IonBadge, IonInput } from '@ionic/angular/standalone';
-
-import { ExploreContainerComponent } from '../explore-container/explore-container.component';
-import { RouterLink } from '@angular/router';
+          IonToolbar, IonTitle, IonContent, IonInput, IonText,
+          IonAlert, IonModal, IonButtons } from '@ionic/angular/standalone';
 import { FormsModule } from '@angular/forms';
 
 export interface Item  {
@@ -17,25 +15,59 @@ export interface Item  {
   selector: 'app-tab1',
   templateUrl: 'tab1.page.html',
   styleUrls: ['tab1.page.scss'],
-  imports: [FormsModule, IonHeader, IonToolbar, IonTitle, IonContent,
-    ExploreContainerComponent, IonLabel, IonSegment,
-    IonSegmentButton, RouterLink, IonSegmentView,
-    IonSegmentContent, IonList, IonItem, IonBadge, IonInput, IonButton],
+  imports: [IonAlert, IonText, FormsModule, IonHeader,
+    IonContent, IonLabel, IonSegment,
+    IonSegmentButton, IonSegmentView,
+    IonSegmentContent, IonList, IonItem, IonInput,
+    IonButton, IonModal, IonButtons, IonToolbar, IonTitle],
 })
 
 export class Tab1Page {
   constructor() {}
 
-  itemName: string = "";
-  itemQty: number = 0;
-  itemDesc: string = "";
-
-  items: Item[] = [
-  ];
+  alertButtons = ['OK'];
+  itemName: string = "No name provided";
+  itemQty: number = 1;
+  itemDesc?: string = "No description provided";
+  isQuantityAlert: boolean = false;
+  isItemModalOpen: boolean = false;
+  isEditingItem: boolean = false;
+  activeItem: Item = {"name": "", "qty": 0, "desc": ""};
+  items: Item[] = [];
   itemCount:number = this.items.length;
 
   addToStock = () => {
+    if (this.itemQty <= 0) {
+      this.isQuantityAlert = true;
+      return;
+    }
     this.items.push({"name": this.itemName, "qty": this.itemQty, "desc": this.itemDesc});    
     this.itemCount++;
+  }
+
+  setResult = () => {
+    this.isQuantityAlert = false;
+  }
+
+  openItemModal = (selectedItem: Item) => {
+    this.activeItem = selectedItem;
+    this.isItemModalOpen = true;
+  }
+
+  closeItemModal = () => {
+    this.isItemModalOpen = false;
+    
+    setTimeout(() => {
+      this.isEditingItem = false;
+    }, 200);  }
+
+  removeItem = () => {
+    this.items = this.items.filter(item => item !== this.activeItem);
+    this.itemCount = this.items.length;
+    this.closeItemModal();
+  }
+
+  editDetails = () => {
+    this.isEditingItem = !this.isEditingItem;
   }
 }

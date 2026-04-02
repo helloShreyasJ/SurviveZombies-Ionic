@@ -4,33 +4,31 @@
 
 <ion-content [fullscreen]="true">
   <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Inventory</ion-title>
-    </ion-toolbar>
   </ion-header>
 
   <ion-segment value="default">
-    <ion-segment-button value="default" contentId="displayItems">
+    <ion-segment-button value="default" contentId="display-items">
       <ion-label>Items ({{itemCount}})</ion-label>
     </ion-segment-button>
-    <ion-segment-button value="segment" contentId="addItems">
+    <ion-segment-button value="segment" contentId="add-items">
       <ion-label>Add Items</ion-label>
     </ion-segment-button>
   </ion-segment>
 
   <ion-segment-view>
-    <ion-segment-content id="displayItems">
+    <ion-segment-content id="display-items">
       <ion-list>
         @for (item of items; track item) {
-          <ion-label>
-            <h2>{{item.name}}</h2>
-            <p>{{item.desc}}</p>
-          </ion-label>
-          <ion-badge>{{item.qty}}</ion-badge>
+          <ion-item button="true" detail="true" (click)="openItemModal(item)">
+            <ion-label>{{ item.name }}</ion-label>
+            
+            <ion-text slot="end">{{ item.qty }}</ion-text>
+          </ion-item>
         }  
       </ion-list>
     </ion-segment-content>
-    <ion-segment-content id="addItems">
+    <ion-segment-content id="add-items">
+      <div class="form-wrapper">
         <ion-item>
           <ion-input label="Name" placeholder="Enter name" labelPlacement="stacked" [clearInput]="true" [(ngModel)]="itemName"></ion-input>
         </ion-item>
@@ -40,9 +38,56 @@
         <ion-item>
           <ion-input label="Description" placeholder="Enter description" labelPlacement="stacked" [clearInput]="true" [(ngModel)]="itemDesc"></ion-input>
         </ion-item>
-      <ion-button (click)="addToStock()">add to stock</ion-button>
 
+      <ion-button id="add-stock-button" (click)="addToStock()">ADD TO STOCK</ion-button>
+      </div>
     </ion-segment-content>
   </ion-segment-view>
-  
+
+  <ion-alert
+    [isOpen]="isQuantityAlert"
+    header="Invalid Entry"
+    message="Quantity should be greater than 0"
+    [buttons]="alertButtons"
+    (didDismiss)="setResult()"
+  ></ion-alert>
+
+  <ion-modal [isOpen]="isItemModalOpen" (didDismiss)="closeItemModal()">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-buttons slot="end">
+            <ion-button (click)="closeItemModal()">Close</ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+
+      <ion-content class="ion-padding">
+        <h2>{{activeItem.name}}</h2>
+        <p>{{activeItem.desc}}</p>
+
+        
+
+        <div class="form-wrapper">
+          @if (!isEditingItem) {
+            <ion-button id="edit-details-button" (click)="editDetails()">EDIT DETAILS</ion-button>
+          }
+
+          @if (isEditingItem) {
+            <ion-item>
+              <ion-input label="Name" labelPlacement="stacked" [(ngModel)]="activeItem.name"></ion-input>
+            </ion-item>
+            <ion-item>
+              <ion-input type="number" label="Amount" labelPlacement="stacked" [(ngModel)]="activeItem.qty"></ion-input>
+            </ion-item>
+            <ion-item>
+              <ion-input label="Description" labelPlacement="stacked" [(ngModel)]="activeItem.desc"></ion-input>
+            </ion-item>
+            <ion-button id="save-changes-button" expand="block" (click)="editDetails()">SAVE CHANGES</ion-button>
+          }
+          <ion-button id="remove-item-button" expand="block" (click)="removeItem()">REMOVE ITEM</ion-button>
+        </div>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
 </ion-content>
