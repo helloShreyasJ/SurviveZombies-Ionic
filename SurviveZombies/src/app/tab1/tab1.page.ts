@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
 import { IonButton, IonList, IonItem, IonSegmentContent, IonSegmentView,
           IonLabel, IonSegment, IonSegmentButton, IonHeader,
-          IonToolbar, IonTitle, IonContent, IonInput, IonText,
+          IonToolbar, IonContent, IonInput, IonText,
           IonAlert, IonModal, IonButtons } from '@ionic/angular/standalone';
 import { FormsModule } from '@angular/forms';
+import { Storage } from '@ionic/storage-angular';
 
 export interface Item  {
   name: string;
@@ -19,11 +20,11 @@ export interface Item  {
     IonContent, IonLabel, IonSegment,
     IonSegmentButton, IonSegmentView,
     IonSegmentContent, IonList, IonItem, IonInput,
-    IonButton, IonModal, IonButtons, IonToolbar, IonTitle],
+    IonButton, IonModal, IonButtons, IonToolbar],
 })
 
 export class Tab1Page {
-  constructor() {}
+  constructor(private storage: Storage) {}
 
   alertButtons = ['OK'];
   itemName: string = "No name provided";
@@ -36,6 +37,11 @@ export class Tab1Page {
   items: Item[] = [];
   itemCount:number = this.items.length;
 
+  async ngOnInit() {
+    await this.storage.create();
+    await this.loadInventory(); 
+  }
+
   addToStock = () => {
     if (this.itemQty <= 0) {
       this.isQuantityAlert = true;
@@ -43,6 +49,7 @@ export class Tab1Page {
     }
     this.items.push({"name": this.itemName, "qty": this.itemQty, "desc": this.itemDesc});    
     this.itemCount++;
+    this.saveInventory();
   }
 
   setResult = () => {
@@ -56,18 +63,32 @@ export class Tab1Page {
 
   closeItemModal = () => {
     this.isItemModalOpen = false;
-    
     setTimeout(() => {
       this.isEditingItem = false;
-    }, 200);  }
+    }, 200);
+    this.saveInventory();
+  }
 
   removeItem = () => {
     this.items = this.items.filter(item => item !== this.activeItem);
     this.itemCount = this.items.length;
     this.closeItemModal();
+    this.saveInventory();
   }
 
   editDetails = () => {
     this.isEditingItem = !this.isEditingItem;
+  }
+
+  async saveInventory() {
+    await this.storage.set('items', this.items);
+  }
+
+  async loadInventory() {
+    const savedItems = await this.storage.get('items');
+    if (savedItems) {
+      this.items = savedItems;
+      this.itemCount = this.items.length;
+    }
   }
 }
