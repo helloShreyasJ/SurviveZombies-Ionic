@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { IonButton, IonList, IonItem, IonSegmentContent, IonSegmentView,
           IonLabel, IonSegment, IonSegmentButton, IonHeader,
           IonToolbar, IonContent, IonInput, IonText,
-          IonAlert, IonModal, IonButtons } from '@ionic/angular/standalone';
+          IonAlert, IonModal, IonButtons, IonSearchbar } from '@ionic/angular/standalone';
 import { FormsModule } from '@angular/forms';
 import { Storage } from '@ionic/storage-angular';
 
@@ -16,7 +16,7 @@ export interface Item  {
   selector: 'app-tab1',
   templateUrl: 'tab1.page.html',
   styleUrls: ['tab1.page.scss'],
-  imports: [IonAlert, IonText, FormsModule, IonHeader,
+  imports: [IonSearchbar, IonAlert, IonText, FormsModule, IonHeader,
     IonContent, IonLabel, IonSegment,
     IonSegmentButton, IonSegmentView,
     IonSegmentContent, IonList, IonItem, IonInput,
@@ -35,6 +35,7 @@ export class Tab1Page {
   isEditingItem: boolean = false;
   activeItem: Item = {"name": "", "qty": 0, "desc": ""};
   items: Item[] = [];
+  filteredItems: Item[] = [];
   itemCount:number = this.items.length;
 
   async ngOnInit() {
@@ -48,6 +49,7 @@ export class Tab1Page {
       return;
     }
     this.items.push({"name": this.itemName, "qty": this.itemQty, "desc": this.itemDesc});    
+    this.filteredItems = this.items;
     this.itemCount++;
     this.saveInventory();
   }
@@ -71,6 +73,7 @@ export class Tab1Page {
 
   removeItem = () => {
     this.items = this.items.filter(item => item !== this.activeItem);
+    this.filteredItems = this.items;
     this.itemCount = this.items.length;
     this.closeItemModal();
     this.saveInventory();
@@ -88,7 +91,16 @@ export class Tab1Page {
     const savedItems = await this.storage.get('items');
     if (savedItems) {
       this.items = savedItems;
+      this.filteredItems = this.items;
       this.itemCount = this.items.length;
     }
+  }
+
+  searchList = (event: any) => {
+    const query = event.target.value.toLowerCase();
+
+    this.filteredItems = this.items.filter(item => 
+      item.name.toLowerCase().includes(query)
+    );
   }
 }

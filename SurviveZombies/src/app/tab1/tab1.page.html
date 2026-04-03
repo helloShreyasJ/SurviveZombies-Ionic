@@ -17,8 +17,11 @@
 
   <ion-segment-view>
     <ion-segment-content id="display-items">
+
+      <ion-searchbar (ionInput)="searchList($event)"></ion-searchbar>
+
       <ion-list>
-        @for (item of items; track item) {
+        @for (item of filteredItems; track item) {
           <ion-item button="true" detail="true" (click)="openItemModal(item)">
             <ion-label>{{ item.name }}</ion-label>
             
