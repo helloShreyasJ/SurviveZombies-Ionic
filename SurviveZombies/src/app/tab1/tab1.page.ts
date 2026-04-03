@@ -2,9 +2,10 @@ import { Component } from '@angular/core';
 import { IonButton, IonList, IonItem, IonSegmentContent, IonSegmentView,
           IonLabel, IonSegment, IonSegmentButton, IonHeader,
           IonToolbar, IonContent, IonInput, IonText,
-          IonAlert, IonModal, IonButtons, IonSearchbar } from '@ionic/angular/standalone';
+          IonAlert, IonModal, IonButtons, IonSearchbar, IonFabList, IonFabButton, IonIcon, IonFab } from '@ionic/angular/standalone';
 import { FormsModule } from '@angular/forms';
 import { Storage } from '@ionic/storage-angular';
+import { Share } from '@capacitor/share';
 
 export interface Item  {
   name: string;
@@ -16,7 +17,7 @@ export interface Item  {
   selector: 'app-tab1',
   templateUrl: 'tab1.page.html',
   styleUrls: ['tab1.page.scss'],
-  imports: [IonSearchbar, IonAlert, IonText, FormsModule, IonHeader,
+  imports: [IonFab, IonIcon, IonFabButton, IonFabList, IonSearchbar, IonAlert, IonText, FormsModule, IonHeader,
     IonContent, IonLabel, IonSegment,
     IonSegmentButton, IonSegmentView,
     IonSegmentContent, IonList, IonItem, IonInput,
@@ -26,7 +27,7 @@ export interface Item  {
 export class Tab1Page {
   constructor(private storage: Storage) {}
 
-  alertButtons = ['OK'];
+  alertButtons: string[] = ['OK'];
   itemName: string = "No name provided";
   itemQty: number = 1;
   itemDesc?: string = "No description provided";
@@ -37,6 +38,25 @@ export class Tab1Page {
   items: Item[] = [];
   filteredItems: Item[] = [];
   itemCount:number = this.items.length;
+  isUserAlert: boolean = false;
+  userName: string = "";
+  alertInputs = [
+    {
+      name: 'survivorName',
+      type: 'text',
+      placeholder: 'Enter your name...',
+    }
+  ];
+  shareAlertButtons = [
+    {
+      text: 'Cancel',
+      role: 'cancel',
+    },
+    {
+      text: 'Share',
+      role: 'confirm',
+    }
+  ];
 
   async ngOnInit() {
     await this.storage.create();
@@ -84,12 +104,12 @@ export class Tab1Page {
     this.isEditingItem = !this.isEditingItem;
   }
 
-  async saveInventory() {
+  saveInventory = async() => {
     this.items.sort((a, b) => a.name.localeCompare(b.name));
     await this.storage.set('items', this.items);
   }
 
-  async loadInventory() {
+  loadInventory = async() => {
     const savedItems = await this.storage.get('items');
     if (savedItems) {
       this.items = savedItems;
@@ -101,9 +121,48 @@ export class Tab1Page {
 
   searchList = (event: any) => {
     const query = event.target.value.toLowerCase();
-
     this.filteredItems = this.items.filter(item => 
       item.name.toLowerCase().startsWith(query)
     );
+  }
+
+  startShareProcess = () => {
+    this.isUserAlert = true;
+  }
+
+  formatOutput = ():string => {
+    let message: string = "";
+    this.items.forEach(i => {
+      message += `\n${i.name} (Qty: ${i.qty})\n`;
+      if (i.desc) {
+        message += `Notes: ${i.desc}\n`;
+      }
+    });
+    return message;
+  };
+
+  shareDismiss = async (event: any) => {
+    this.isUserAlert = false;
+    if (event.detail.role === 'confirm') {      
+      const typedName = event.detail.data.values.survivorName;  
+      if (typedName) {
+        this.userName = typedName;
+      } else {
+        this.userName = 'Survivor';
+      }
+      await this.executeShare();
+    }
+  }
+
+  executeShare = async() =>{
+    try {
+      await Share.share({
+        title: `${this.userName}'s Inventory`,
+        text: this.formatOutput(),
+        dialogTitle: 'Broadcast stash to survivors...',
+      });
+    } catch (error) {
+      console.log(error);
+    }
   }
 }
