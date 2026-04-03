@@ -49,6 +49,7 @@ export class Tab1Page {
       return;
     }
     this.items.push({"name": this.itemName, "qty": this.itemQty, "desc": this.itemDesc});    
+    this.items.sort((a, b) => a.name.localeCompare(b.name));
     this.filteredItems = this.items;
     this.itemCount++;
     this.saveInventory();
@@ -84,6 +85,7 @@ export class Tab1Page {
   }
 
   async saveInventory() {
+    this.items.sort((a, b) => a.name.localeCompare(b.name));
     await this.storage.set('items', this.items);
   }
 
@@ -91,6 +93,7 @@ export class Tab1Page {
     const savedItems = await this.storage.get('items');
     if (savedItems) {
       this.items = savedItems;
+      this.items.sort((a, b) => a.name.localeCompare(b.name));
       this.filteredItems = this.items;
       this.itemCount = this.items.length;
     }
@@ -100,7 +103,7 @@ export class Tab1Page {
     const query = event.target.value.toLowerCase();
 
     this.filteredItems = this.items.filter(item => 
-      item.name.toLowerCase().includes(query)
+      item.name.toLowerCase().startsWith(query)
     );
   }
 }
