@@ -16,8 +16,8 @@
   </ion-segment>
 
   <ion-segment-view>
+    
     <ion-segment-content id="display-items">
-
       <ion-searchbar (ionInput)="searchList($event)"></ion-searchbar>
 
       <ion-list>
@@ -54,6 +54,26 @@
     [buttons]="alertButtons"
     (didDismiss)="setResult()"
   ></ion-alert>
+
+  <ion-alert
+    [isOpen]="isUserAlert"
+    header="Identify yourself"
+    message="Enter your name: "
+    [inputs]="alertInputs"
+    [buttons]="shareAlertButtons"
+    (didDismiss)="shareDismiss($event)"
+  ></ion-alert>
+
+  <ion-fab slot="fixed" vertical="bottom" horizontal="end">
+    <ion-fab-button>
+      <ion-icon name="ellipsis-horizontal"></ion-icon>
+    </ion-fab-button>
+    <ion-fab-list side="top">
+      <ion-fab-button id="share-button" (click)="startShareProcess()">
+      <ion-icon name="share-outline"></ion-icon>
+      </ion-fab-button>
+    </ion-fab-list>
+  </ion-fab>
 
   <ion-modal [isOpen]="isItemModalOpen" (didDismiss)="closeItemModal()">
     <ng-template>

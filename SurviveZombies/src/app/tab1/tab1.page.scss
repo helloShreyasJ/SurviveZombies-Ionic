@@ -55,3 +55,18 @@ ion-segment-content {
   flex-direction: column;
   height: 100%;
 }
+
+ion-fab-button::part(native) {
+  background-color: #104911;
+  border-radius: 100px;
+  color: #ffffff;
+  --box-shadow: none;
+}
+
+ion-fab-button::part(native):hover::after {
+  background-color: #1A751B;
+}
+
+ion-fab-button::part(native):active::after {
+  background-color: #1A751B;
+}

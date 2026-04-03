@@ -1,7 +1,8 @@
 import { Component, EnvironmentInjector, inject } from '@angular/core';
 import { IonTabs, IonTabBar, IonTabButton, IonIcon, IonLabel } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { triangle, ellipse, square, map, fileTray } from 'ionicons/icons';
+import { triangle, ellipse, square, map, fileTray, shareOutline, ellipsisHorizontal } from 'ionicons/icons';
+import { share } from 'rxjs';
 
 @Component({
   selector: 'app-tabs',
@@ -13,7 +14,7 @@ export class TabsPage {
   public environmentInjector = inject(EnvironmentInjector);
 
   constructor() {
-    addIcons({ triangle, ellipse, square, map, fileTray });
+    addIcons({ triangle, ellipse, square, map, fileTray, shareOutline, ellipsisHorizontal });
   }
 
   backpack: string = "assets/icons/backpack.svg";
