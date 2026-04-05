@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild, OnInit } from '@angular/core';
+import { Component, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
 import { IonButton, IonHeader, IonContent } from '@ionic/angular/standalone';
 import { GoogleMap } from '@capacitor/google-maps';
 import { Geolocation } from '@capacitor/geolocation';
@@ -22,7 +22,7 @@ export class Tab2Page {
   currentLat: number = 0.000;
   currentLng: number = 0.000;
 
-  ngOnInit() { 
+  ngAfterViewInit() { 
     this.createMap();
   } 
 
