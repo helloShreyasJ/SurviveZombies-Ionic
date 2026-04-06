@@ -1,6 +1,6 @@
 import { Component, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
 import { IonButton, IonHeader, IonContent } from '@ionic/angular/standalone';
-import { GoogleMap } from '@capacitor/google-maps';
+import { GoogleMap, Marker } from '@capacitor/google-maps';
 import { Geolocation } from '@capacitor/geolocation';
 import { environment } from '../../environments/environment';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
@@ -16,7 +16,7 @@ import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 export class Tab2Page {
 
   @ViewChild('map') mapRef!: ElementRef<HTMLElement>;
-  newMap: GoogleMap | undefined;
+  map: GoogleMap | undefined;
 
   constructor() {}
   currentLat: number = 0.000;
@@ -41,10 +41,11 @@ export class Tab2Page {
     }
 
     try {
-      this.newMap = await GoogleMap.create({
+      this.map = await GoogleMap.create({
         id: 'safe-zone-map',
         element: this.mapRef.nativeElement,
         apiKey: environment.apiKey, 
+        forceCreate: true,
         config: {
           center: {
             lat: mapLat,
@@ -53,8 +54,29 @@ export class Tab2Page {
           zoom: 15,
         },
       });
+
+      await this.map.setOnMapClickListener((event) => {
+        const tapLat = event.latitude;
+        const tapLng = event.longitude;
+        
+        this.addMarkers(tapLat, tapLng);
+      });
+
     } catch (error) {
       console.log(error);
     }
+  }
+
+  addMarkers = async (markLatitude: number, markLongitude: number) => {
+    if (this.map == null) return;
+    await this.map.addMarker({
+      coordinate: {
+        lat: markLatitude,
+        lng: markLongitude
+      }, 
+      iconUrl: 'assets/markers/benign.png'
+
+    });
+    console.log(`Pin dropped at ${markLatitude}, ${markLongitude}`);
   }
 }
