@@ -1,6 +1,6 @@
-import { Component, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { IonButton, IonHeader, IonContent } from '@ionic/angular/standalone';
-import { GoogleMap } from '@capacitor/google-maps';
+import { GoogleMap, Marker } from '@capacitor/google-maps';
 import { Geolocation } from '@capacitor/geolocation';
 import { environment } from '../../environments/environment';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
@@ -16,7 +16,14 @@ import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 export class Tab2Page {
 
   @ViewChild('map') mapRef!: ElementRef<HTMLElement>;
-  newMap: GoogleMap | undefined;
+  map: GoogleMap | undefined;
+  markerTracker: {
+    [id: string]: {
+      lat: number,
+      lng: number,
+      state: string
+    }
+  } = {};
 
   constructor() {}
   currentLat: number = 0.000;
@@ -41,10 +48,11 @@ export class Tab2Page {
     }
 
     try {
-      this.newMap = await GoogleMap.create({
+      this.map = await GoogleMap.create({
         id: 'safe-zone-map',
         element: this.mapRef.nativeElement,
         apiKey: environment.apiKey, 
+        forceCreate: true,
         config: {
           center: {
             lat: mapLat,
@@ -53,8 +61,65 @@ export class Tab2Page {
           zoom: 15,
         },
       });
+
+      await this.map.setOnMapClickListener((event) => {
+        const tapLat = event.latitude;
+        const tapLng = event.longitude;
+        
+        this.addMarkers(tapLat, tapLng);
+        // DEBUG: console.log(this.markerTracker);
+      });
+
+      await this.map.setOnMarkerClickListener(async (marker) => {
+        const pinMemory = this.markerTracker[marker.markerId];
+
+        if (!pinMemory) return;
+
+        if (pinMemory.state == 'benign') {
+          await this.map?.removeMarker(marker.markerId);
+          delete this.markerTracker[marker.markerId];
+        
+        const newDangerId = await this.map!.addMarker({
+          coordinate: {
+            lat: pinMemory.lat,
+            lng: pinMemory.lng
+          },
+            iconUrl: 'assets/markers/danger.png'
+        });
+
+        this.markerTracker[newDangerId] = {
+          lat: pinMemory.lat,
+          lng: pinMemory.lng,
+          state: 'danger'
+        };
+
+        } else if (pinMemory.state == 'danger') {
+          await this.map?.removeMarker(marker.markerId);
+          delete this.markerTracker[marker.markerId];
+        }
+      });
+
     } catch (error) {
       console.log(error);
     }
+  }
+
+  addMarkers = async (markLatitude: number, markLongitude: number) => {
+    if (this.map == null) return;
+    const newMarkerId = await this.map.addMarker({
+      coordinate: {
+        lat: markLatitude,
+        lng: markLongitude
+      }, 
+      iconUrl: 'assets/markers/benign.png',
+    });
+
+    this.markerTracker[newMarkerId] = {
+      lat: markLatitude,
+      lng: markLongitude,
+      state: 'benign'
+    };
+
+    // DEBUG: console.log(`Pin dropped at ${markLatitude}, ${markLongitude}`);
   }
 }
