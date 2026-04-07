@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { IonButton, IonHeader, IonContent } from '@ionic/angular/standalone';
 import { GoogleMap, Marker } from '@capacitor/google-maps';
 import { Geolocation } from '@capacitor/geolocation';
@@ -17,6 +17,13 @@ export class Tab2Page {
 
   @ViewChild('map') mapRef!: ElementRef<HTMLElement>;
   map: GoogleMap | undefined;
+  markerTracker: {
+    [id: string]: {
+      lat: number,
+      lng: number,
+      state: string
+    }
+  } = {};
 
   constructor() {}
   currentLat: number = 0.000;
@@ -60,6 +67,36 @@ export class Tab2Page {
         const tapLng = event.longitude;
         
         this.addMarkers(tapLat, tapLng);
+        // DEBUG: console.log(this.markerTracker);
+      });
+
+      await this.map.setOnMarkerClickListener(async (marker) => {
+        const pinMemory = this.markerTracker[marker.markerId];
+
+        if (!pinMemory) return;
+
+        if (pinMemory.state == 'benign') {
+          await this.map?.removeMarker(marker.markerId);
+          delete this.markerTracker[marker.markerId];
+        
+        const newDangerId = await this.map!.addMarker({
+          coordinate: {
+            lat: pinMemory.lat,
+            lng: pinMemory.lng
+          },
+            iconUrl: 'assets/markers/danger.png'
+        });
+
+        this.markerTracker[newDangerId] = {
+          lat: pinMemory.lat,
+          lng: pinMemory.lng,
+          state: 'danger'
+        };
+
+        } else if (pinMemory.state == 'danger') {
+          await this.map?.removeMarker(marker.markerId);
+          delete this.markerTracker[marker.markerId];
+        }
       });
 
     } catch (error) {
@@ -69,14 +106,20 @@ export class Tab2Page {
 
   addMarkers = async (markLatitude: number, markLongitude: number) => {
     if (this.map == null) return;
-    await this.map.addMarker({
+    const newMarkerId = await this.map.addMarker({
       coordinate: {
         lat: markLatitude,
         lng: markLongitude
       }, 
-      iconUrl: 'assets/markers/benign.png'
-
+      iconUrl: 'assets/markers/benign.png',
     });
-    console.log(`Pin dropped at ${markLatitude}, ${markLongitude}`);
+
+    this.markerTracker[newMarkerId] = {
+      lat: markLatitude,
+      lng: markLongitude,
+      state: 'benign'
+    };
+
+    // DEBUG: console.log(`Pin dropped at ${markLatitude}, ${markLongitude}`);
   }
 }
