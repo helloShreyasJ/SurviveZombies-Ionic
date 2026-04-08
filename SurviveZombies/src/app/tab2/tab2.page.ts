@@ -1,9 +1,11 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { IonButton, IonHeader, IonContent } from '@ionic/angular/standalone';
-import { GoogleMap, Marker } from '@capacitor/google-maps';
+import { GoogleMap } from '@capacitor/google-maps';
 import { Geolocation } from '@capacitor/geolocation';
 import { environment } from '../../environments/environment';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { SafeZoneService } from '../services/safe-zone-service';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-tab2',
@@ -24,8 +26,9 @@ export class Tab2Page {
       state: string
     }
   } = {};
+  safeZones: any[] = [];
 
-  constructor() {}
+  constructor(private service: SafeZoneService) {}
   currentLat: number = 0.000;
   currentLng: number = 0.000;
 
@@ -61,6 +64,8 @@ export class Tab2Page {
           zoom: 15,
         },
       });
+
+      this.loadSafeZonesFromService();
 
       await this.map.setOnMapClickListener((event) => {
         const tapLat = event.latitude;
@@ -119,7 +124,36 @@ export class Tab2Page {
       lng: markLongitude,
       state: 'benign'
     };
-
     // DEBUG: console.log(`Pin dropped at ${markLatitude}, ${markLongitude}`);
+  }
+
+  addSafeZones = async (zoneData: any[]) => {
+    if (this.map == null) return;
+
+    try {
+      const newZones = zoneData.map((zone: any) => {
+        return {
+          center: { lat: zone.lat, lng: zone.lng }, 
+          radius: zone.rad,
+          fillColor: '#B2CEE7',
+          strokeColor: '#3E8ACD',
+          strokeWidth: 2,
+          clickable: true
+        }
+      });
+
+      await this.map.addCircles(newZones);
+    } catch (error) {
+      // DEBUG: console.log(error);
+    }
+  }
+
+  loadSafeZonesFromService = async () => {
+    this.service.getSafeZoneData().subscribe(async (data) => {
+      this.safeZones = data;
+      console.log(this.safeZones);
+      
+      await this.addSafeZones(this.safeZones);
+    });
   }
 }
