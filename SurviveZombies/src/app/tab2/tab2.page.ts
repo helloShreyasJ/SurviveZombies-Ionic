@@ -1,17 +1,17 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
-import { IonButton, IonHeader, IonContent } from '@ionic/angular/standalone';
+import { IonHeader, IonContent } from '@ionic/angular/standalone';
 import { GoogleMap } from '@capacitor/google-maps';
 import { Geolocation } from '@capacitor/geolocation';
 import { environment } from '../../environments/environment';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { SafeZoneService } from '../services/safe-zone-service';
-import { Observable } from 'rxjs';
+import { Storage } from '@ionic/storage-angular';
 
 @Component({
   selector: 'app-tab2',
   templateUrl: 'tab2.page.html',
   styleUrls: ['tab2.page.scss'],
-  imports: [IonHeader, IonContent, IonButton],
+  imports: [ IonHeader, IonContent ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 
@@ -28,9 +28,13 @@ export class Tab2Page {
   } = {};
   safeZones: any[] = [];
 
-  constructor(private service: SafeZoneService) {}
+  constructor(private service: SafeZoneService, private storage: Storage) {}
   currentLat: number = 0.000;
   currentLng: number = 0.000;
+
+  async ngOnInit() {
+    await this.storage.create();
+  }
 
   ngAfterViewInit() { 
     this.createMap();
@@ -65,24 +69,25 @@ export class Tab2Page {
         },
       });
 
-      this.loadSafeZonesFromService();
+      await this.loadMarkers();
+      await this.loadSafeZonesFromService();
 
-      await this.map.setOnMapClickListener((event) => {
-        const tapLat = event.latitude;
-        const tapLng = event.longitude;
+      await this.map.setOnMapClickListener((mapTapped) => {
+        const tapLat = mapTapped.latitude;
+        const tapLng = mapTapped.longitude;
         
         this.addMarkers(tapLat, tapLng);
         // DEBUG: console.log(this.markerTracker);
       });
 
-      await this.map.setOnMarkerClickListener(async (marker) => {
-        const pinMemory = this.markerTracker[marker.markerId];
+      await this.map.setOnMarkerClickListener(async (markerTapped) => {
+        const pinMemory = this.markerTracker[markerTapped.markerId];
 
         if (!pinMemory) return;
 
         if (pinMemory.state == 'benign') {
-          await this.map?.removeMarker(marker.markerId);
-          delete this.markerTracker[marker.markerId];
+          await this.map?.removeMarker(markerTapped.markerId);
+          delete this.markerTracker[markerTapped.markerId];
         
         const newDangerId = await this.map!.addMarker({
           coordinate: {
@@ -97,11 +102,13 @@ export class Tab2Page {
           lng: pinMemory.lng,
           state: 'danger'
         };
+        this.saveMarkers();
 
         } else if (pinMemory.state == 'danger') {
-          await this.map?.removeMarker(marker.markerId);
-          delete this.markerTracker[marker.markerId];
+          await this.map?.removeMarker(markerTapped.markerId);
+          delete this.markerTracker[markerTapped.markerId];
         }
+        this.saveMarkers();
       });
 
     } catch (error) {
@@ -111,6 +118,7 @@ export class Tab2Page {
 
   addMarkers = async (markLatitude: number, markLongitude: number) => {
     if (this.map == null) return;
+
     const newMarkerId = await this.map.addMarker({
       coordinate: {
         lat: markLatitude,
@@ -125,6 +133,8 @@ export class Tab2Page {
       state: 'benign'
     };
     // DEBUG: console.log(`Pin dropped at ${markLatitude}, ${markLongitude}`);
+
+    await this.saveMarkers();
   }
 
   addSafeZones = async (zoneData: any[]) => {
@@ -144,7 +154,7 @@ export class Tab2Page {
 
       await this.map.addCircles(newZones);
     } catch (error) {
-      // DEBUG: console.log(error);
+      console.log(error);
     }
   }
 
@@ -155,5 +165,25 @@ export class Tab2Page {
       
       await this.addSafeZones(this.safeZones);
     });
+  }
+
+  saveMarkers = async () => {
+    const pinArray = Object.values(this.markerTracker);
+    await this.storage.set('markers', pinArray);
+  }
+
+  loadMarkers = async () => {
+    const saved = await this.storage.get('markers');
+    if (!saved) return;
+
+    for (const pin of saved) {
+      if (this.map == null) return;
+
+      const id = await this.map.addMarker({
+        coordinate: { lat: pin.lat, lng: pin.lng },
+        iconUrl: pin.state === 'danger' ? 'assets/markers/danger.png' : 'assets/markers/benign.png'
+      });
+      this.markerTracker[id] = pin;
+    }
   }
 }
