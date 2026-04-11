@@ -1,0 +1,19 @@
+ion-content {
+  --background: #E6EFE9;
+}
+
+ion-button {
+  --box-shadow: none;
+}
+
+#settings-header {
+  font-size: 36px;
+  margin: 20px 0px 10px 20px;
+}
+
+ion-toggle {
+  --track-background: #ddd;
+  --track-background-checked: #ddd;
+  --handle-background-checked: #1A751B;
+  --handle-box-shadow: none;
+}

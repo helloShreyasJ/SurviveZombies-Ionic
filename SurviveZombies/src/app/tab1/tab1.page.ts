@@ -6,10 +6,11 @@ import { IonButton, IonList, IonItem, IonSegmentContent, IonSegmentView,
 import { FormsModule } from '@angular/forms';
 import { Storage } from '@ionic/storage-angular';
 import { Share } from '@capacitor/share';
+import { RouterLink } from '@angular/router';
 
 export interface Item  {
   name: string;
-  qty: number;
+  qty: number | null;
   desc?: string;
 }
 
@@ -21,16 +22,16 @@ export interface Item  {
     IonContent, IonLabel, IonSegment,
     IonSegmentButton, IonSegmentView,
     IonSegmentContent, IonList, IonItem, IonInput,
-    IonButton, IonModal, IonButtons, IonToolbar],
+    IonButton, IonModal, IonButtons, IonToolbar, RouterLink],
 })
 
 export class Tab1Page {
   constructor(private storage: Storage) {}
 
   alertButtons: string[] = ['OK'];
-  itemName: string = "No name provided";
-  itemQty: number = 1;
-  itemDesc?: string = "No description provided";
+  itemName: string = "";
+  itemQty: number | null = null;
+  itemDesc?: string = "";
   isQuantityAlert: boolean = false;
   isItemModalOpen: boolean = false;
   isEditingItem: boolean = false;
@@ -64,6 +65,8 @@ export class Tab1Page {
   }
 
   addToStock = () => {
+    if (this.itemQty == null) return;
+
     if (this.itemQty <= 0) {
       this.isQuantityAlert = true;
       return;
@@ -73,6 +76,10 @@ export class Tab1Page {
     this.filteredItems = this.items;
     this.itemCount++;
     this.saveInventory();
+
+    this.itemName = "";
+    this.itemQty = null;
+    this.itemDesc = "";
   }
 
   setResult = () => {

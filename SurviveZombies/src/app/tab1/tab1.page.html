@@ -72,6 +72,9 @@
       <ion-fab-button id="share-button" (click)="startShareProcess()">
       <ion-icon name="share-outline"></ion-icon>
       </ion-fab-button>
+      <ion-fab-button id="settings-button" routerLink="/settings">
+      <ion-icon name="options-sharp"></ion-icon>
+      </ion-fab-button>
     </ion-fab-list>
   </ion-fab>
 
@@ -98,13 +101,13 @@
 
           @if (isEditingItem) {
             <ion-item>
-              <ion-input label="Name" labelPlacement="stacked" [(ngModel)]="activeItem.name"></ion-input>
+              <ion-input placeholder="Name" labelPlacement="stacked" [(ngModel)]="activeItem.name"></ion-input>
             </ion-item>
             <ion-item>
-              <ion-input type="number" label="Amount" labelPlacement="stacked" [(ngModel)]="activeItem.qty"></ion-input>
+              <ion-input type="number" placeholder="Amount" labelPlacement="stacked" [(ngModel)]="activeItem.qty"></ion-input>
             </ion-item>
             <ion-item>
-              <ion-input label="Description" labelPlacement="stacked" [(ngModel)]="activeItem.desc"></ion-input>
+              <ion-input placeholder="Description" labelPlacement="stacked" [(ngModel)]="activeItem.desc"></ion-input>
             </ion-item>
             <ion-button id="save-changes-button" expand="block" (click)="editDetails()">SAVE CHANGES</ion-button>
           }
