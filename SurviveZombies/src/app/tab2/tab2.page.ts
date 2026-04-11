@@ -2,7 +2,6 @@ import { Component, ElementRef, ViewChild } from '@angular/core';
 import { IonHeader, IonContent } from '@ionic/angular/standalone';
 import { GoogleMap } from '@capacitor/google-maps';
 import { Geolocation } from '@capacitor/geolocation';
-import { environment } from '../../environments/environment';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { SafeZoneService } from '../services/safe-zone-service';
 import { Storage } from '@ionic/storage-angular';
@@ -27,10 +26,10 @@ export class Tab2Page {
     }
   } = {};
   safeZones: any[] = [];
-
-  constructor(private service: SafeZoneService, private storage: Storage) {}
   currentLat: number = 0.000;
   currentLng: number = 0.000;
+
+  constructor(private service: SafeZoneService, private storage: Storage) {}
 
   async ngOnInit() {
     await this.storage.create();
@@ -41,6 +40,7 @@ export class Tab2Page {
   } 
 
   createMap = async() => {
+    let apiKey = await this.storage.get('api_key'); 
     let mapLat = 53.271;
     let mapLng = -9.063;
 
@@ -58,7 +58,7 @@ export class Tab2Page {
       this.map = await GoogleMap.create({
         id: 'safe-zone-map',
         element: this.mapRef.nativeElement,
-        apiKey: environment.apiKey, 
+        apiKey: apiKey, 
         forceCreate: true,
         config: {
           center: {

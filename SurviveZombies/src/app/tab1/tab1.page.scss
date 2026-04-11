@@ -2,6 +2,10 @@ ion-content {
   --background: #E6EFE9;
 }
 
+ion-button {
+  --box-shadow: none;
+}
+
 ion-segment {
   --indicator-color: #104911; 
 }
