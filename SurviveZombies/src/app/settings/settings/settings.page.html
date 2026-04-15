@@ -15,11 +15,13 @@
   </ion-item>
 
   <ion-item>
-    <ion-input placeholder="Enter API (Google Maps)" [(ngModel)]="apiKey"></ion-input>
+    <ion-input placeholder="Enter API (Google Maps)" [(ngModel)]="apiKey" (ionFocus)="onFocusApiBox()" (ionBlur)="onBlurApiBox()"></ion-input>
     <ion-button (click)="setApiKey()">
       <ion-icon name="add"></ion-icon>
     </ion-button>
   </ion-item>
-
-  <p></p>
+  <br>
+  <ion-text id="p-first-key" [hidden]="!isFocusedApiBox">Get your API key <a href="https://console.cloud.google.com/google/maps-apis/credentials">here</a></ion-text>
+  <br>
+  <div class=""></div>
 </ion-content>
