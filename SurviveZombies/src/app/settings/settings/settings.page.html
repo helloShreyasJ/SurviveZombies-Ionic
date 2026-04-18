@@ -23,5 +23,37 @@
   <br>
   <ion-text id="p-first-key" [hidden]="!isFocusedApiBox">Get your API key <a href="https://console.cloud.google.com/google/maps-apis/credentials">here</a></ion-text>
   <br>
-  <div class=""></div>
+  <button class="settings-segment-container" onclick="window.open('https://www.github.com/helloShreyasJ/SurviveZombies-Ionic/issues')">
+    <img src="assets/icon/octocat.png" width="30" height="30">
+    <span id="issue-title">Raise an Issue</span>
+  </button>
+
+  <button class="settings-segment-container" id="open-modal">
+    <img src="assets/icon/info.png" width="30" height="30">
+    <span id="issue-title">Contact</span>
+    <img id="more-icon" src="assets/icon/more.png" width="8" height="8">
+  </button>
+
+  <ion-modal #modal trigger="open-modal">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>Contact</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="modal.dismiss()">Close</ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+        <div class="contact-details">
+          <img src="assets/icon/mail.png" width="30" height="30">
+          <p>G00440608@atu.ie</p>
+        </div>
+        <div class="contact-details">
+          <img src="assets/icon/linkedin.png" width="30" height="30">
+          <a href="https://www.linkedin.com/in/helloshreyasj/">Let's connect on LinkedIn</a>
+        </div>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
 </ion-content>
