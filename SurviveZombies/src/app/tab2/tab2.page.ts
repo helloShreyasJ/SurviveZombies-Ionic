@@ -5,6 +5,7 @@ import { Geolocation } from '@capacitor/geolocation';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { SafeZoneService } from '../services/safe-zone-service';
 import { Storage } from '@ionic/storage-angular';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-tab2',
@@ -28,11 +29,15 @@ export class Tab2Page {
   safeZones: any[] = [];
   currentLat: number = 0.000;
   currentLng: number = 0.000;
+  darkMode: boolean = false;
 
   constructor(private service: SafeZoneService, private storage: Storage) {}
 
   async ngOnInit() {
     await this.storage.create();
+    let savedTheme = await this.storage.get('dark_mode');
+    this.darkMode = savedTheme;
+    this.applyTheme(this.darkMode);
   }
 
   ngAfterViewInit() { 
@@ -185,5 +190,9 @@ export class Tab2Page {
       });
       this.markerTracker[id] = pin;
     }
+  }
+  
+  applyTheme(isDark: boolean) {
+    document.body.classList.toggle('ion-palette-dark', isDark);
   }
 }

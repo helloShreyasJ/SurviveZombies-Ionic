@@ -1,5 +1,5 @@
 ion-content {
-  --background: #E6EFE9;
+  --background: var(--ion-background-color, #E6EFE9);
 }
 
 ion-button {
@@ -7,13 +7,12 @@ ion-button {
 }
 
 ion-segment {
-  --indicator-color: #104911; 
+  --indicator-color: var(--ion-color-primary, #104911);
 }
 
 ion-segment-button {
-  --color-checked: #104911; 
-  
-  --color: #666666; 
+  --color-checked: var(--ion-color-primary, #104911); 
+  --color: var(--secondary-text, #666666);
 }
 
 ion-segment-content {
@@ -23,35 +22,22 @@ ion-segment-content {
 #remove-item-button {
   height: 36px;
   width: 367px;
-  --background: #C1D7CB;
-  --color: #104911;
-  --background-activated: #1A751B;
+  --background: var(--ion-color-remove, #C1D7CB);
+  --color: var(--ion-text-color, #104911);
+  --background-activated: var(--ion-color-step-100, #1A751B);
   align-self: center;
 }
 
-#save-changes-button {
-  height: 36px;
-  width: 367px;
-  --background: #104911;
-  --background-activated: #1A751B;
-  align-self: center;
-}
-
-#edit-details-button {
-  height: 36px;
-  width: 367px;
-  --background: #104911;
-  --background-activated: #1A751B;
-  align-self: center;
-}
-
+#save-changes-button,
+#edit-details-button,
 #add-stock-button {
   height: 36px;
   width: 367px;
-  --background: #104911;
-  --background-activated: #1A751B;
-  margin: 8px 0 0 0;
   align-self: center;
+  
+  --background: var(--ion-color-primary, #104911);
+  --color: var(--ion-color-primary-contrast, #ffffff);
+  --background-activated: var(--ion-color-step-100, #1A751B);
 }
 
 .form-wrapper {
@@ -61,9 +47,9 @@ ion-segment-content {
 }
 
 ion-fab-button::part(native) {
-  background-color: #104911;
+  background-color: var(--ion-color-primary, #104911);
+  color: var(--ion-color-primary-contrast, #ffffff);
   border-radius: 100px;
-  color: #ffffff;
   --box-shadow: none;
 }
 
@@ -73,4 +59,9 @@ ion-fab-button::part(native):hover::after {
 
 ion-fab-button::part(native):active::after {
   background-color: #1A751B;
+  background-color: var(--ion-color-step-100, #1A751B);
+}
+
+ion-searchbar {
+  color: var(--ion-text-color, #ffffff);
 }
