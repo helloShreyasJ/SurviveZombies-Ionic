@@ -26,8 +26,7 @@ export interface Item  {
 })
 
 export class Tab1Page {
-  constructor(private storage: Storage) {}
-
+  
   alertButtons: string[] = ['OK'];
   itemName: string = "";
   itemQty: number | null = null;
@@ -58,10 +57,16 @@ export class Tab1Page {
       role: 'confirm',
     }
   ];
-
+  darkMode: boolean = false;
+  
+  constructor(private storage: Storage) {}
+  
   async ngOnInit() {
     await this.storage.create();
     await this.loadInventory(); 
+    let savedTheme = await this.storage.get('dark_mode');
+    this.darkMode = savedTheme;
+    this.applyTheme(this.darkMode);
   }
 
   addToStock = () => {
@@ -171,5 +176,9 @@ export class Tab1Page {
     } catch (error) {
       console.log(error);
     }
+  }
+
+  applyTheme(isDark: boolean) {
+    document.body.classList.toggle('ion-palette-dark', isDark);
   }
 }

@@ -15,6 +15,8 @@ import { Storage } from '@ionic/storage-angular';
   imports: [IonModal, IonText, IonToggle, IonButton, IonIcon, IonItem, IonInput, IonButtons, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, IonBackButton ]
 })
 export class SettingsPage implements OnInit {
+  
+  darkMode: boolean = false;
 
   constructor(private storage: Storage) {
     addIcons({ add });
@@ -22,6 +24,9 @@ export class SettingsPage implements OnInit {
 
   async ngOnInit() {
     await this.storage.create();
+    let savedTheme = await this.storage.get('dark_mode');
+    this.darkMode = savedTheme;
+    this.applyTheme(this.darkMode);
   }
 
   apiKey: string = "";
@@ -39,5 +44,14 @@ export class SettingsPage implements OnInit {
     await setTimeout(() => {
       this.isFocusedApiBox = false;
     }, 120);
+  }
+
+  toggleDarkMode = async () => {
+    await this.storage.set('dark_mode', this.darkMode);
+    this.applyTheme(this.darkMode);
+  }
+
+  applyTheme(isDark: boolean) {
+    document.body.classList.toggle('ion-palette-dark', isDark);
   }
 }

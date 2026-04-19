@@ -1,5 +1,5 @@
 ion-content {
-  --background: #E6EFE9;
+  --background: var(--ion-background-color, #E6EFE9);
 }
 
 ion-button {
@@ -9,24 +9,27 @@ ion-button {
 #settings-header {
   font-size: 36px;
   margin: 20px 0px 10px 20px;
+  color: var(--ion-text-color, #000000);
 }
 
 ion-toggle {
   --track-background: #ddd;
   --track-background-checked: #ddd;
-  --handle-background-checked: #1A751B;
+  --handle-background-checked: #7235a1;
   --handle-box-shadow: none;
 }
 
 #p-first-key {
   margin: 0px 0px 0px 20px;
+  color: var(--secondary-text, #666666);
 }
 
 .settings-segment-container {
   height: 42px;
   width: 100%;
   display: flex;
-  background: #ffffff !important;
+  background: var(--ion-item-background, #ffffff);
+  color: var(--ion-text-color, #000000);
   align-items: center;
   gap: 8px;
   padding-left: 10px;
@@ -37,7 +40,8 @@ ion-toggle {
   height: 42px;
   width: 100%;
   display: flex;
-  background: #f4f2f2 !important;
+  background: var(--ion-color-step-50, #f4f2f2);
+  cursor: pointer;
   align-items: center;
   gap: 8px;
 }
@@ -58,4 +62,9 @@ ion-toggle {
   gap: 8px;
   padding-left: 10px;
   padding: 0px 20px 0px 10px;
+  color: var(--ion-text-color, #000000);
+
+  a {
+    color: var(--ion-color-primary);
+  }
 }
