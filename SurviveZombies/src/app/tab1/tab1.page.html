@@ -38,6 +38,9 @@
         <ion-item>
           <ion-input label="Quantity" type="number" placeholder="Enter quantity" labelPlacement="stacked" [clearInput]="true" [(ngModel)]="itemQty"></ion-input>
         </ion-item>
+        <ion-item>
+          <ion-input label="Description" [clearInput]="true" [(ngModel)]="itemDesc"></ion-input>
+        </ion-item>
         <ion-item class="category-container" lines="none">
           <ion-label class="category-header">Category</ion-label>
           <ion-select aria-label="Category" interface="popover" placeholder="Select category" [(ngModel)]="itemCategory">
@@ -45,9 +48,6 @@
               <ion-select-option [value]=category>{{category}}</ion-select-option>
             }
           </ion-select>
-        </ion-item>
-        <ion-item>
-          <ion-input label="Description" placeholder="Enter description" labelPlacement="stacked" [clearInput]="true" [(ngModel)]="itemDesc"></ion-input>
         </ion-item>
       <ion-button id="add-stock-button" (click)="addToStock()">ADD TO STOCK</ion-button>
       </div>
@@ -115,13 +115,13 @@
 
           @if (isEditingItem) {
             <ion-item>
-              <ion-input placeholder="Name" labelPlacement="stacked" [(ngModel)]="activeItem.name"></ion-input>
+              <ion-input label="Name" placeholder="Name" [(ngModel)]="activeItem.name"></ion-input>
             </ion-item>
             <ion-item>
-              <ion-input type="number" placeholder="Amount" labelPlacement="stacked" [(ngModel)]="activeItem.qty"></ion-input>
+              <ion-input label="Quantity" type="number" placeholder="Amount" [(ngModel)]="activeItem.qty"></ion-input>
             </ion-item>
             <ion-item>
-              <ion-input placeholder="Description" labelPlacement="stacked" [(ngModel)]="activeItem.desc"></ion-input>
+              <ion-input label="Description" [(ngModel)]="activeItem.desc"></ion-input>
             </ion-item>
             <ion-item class="category-container" lines="none">
               <ion-label class="category-header">Category</ion-label>
