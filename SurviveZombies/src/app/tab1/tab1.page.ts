@@ -2,7 +2,8 @@ import { Component } from '@angular/core';
 import { IonButton, IonList, IonItem, IonSegmentContent, IonSegmentView,
           IonLabel, IonSegment, IonSegmentButton, IonHeader,
           IonToolbar, IonContent, IonInput, IonText,
-          IonAlert, IonModal, IonButtons, IonSearchbar, IonFabList, IonFabButton, IonIcon, IonFab } from '@ionic/angular/standalone';
+          IonAlert, IonModal, IonButtons, IonSearchbar, IonFabList, IonFabButton,
+          IonIcon, IonFab, IonSelect, IonSelectOption } from '@ionic/angular/standalone';
 import { FormsModule } from '@angular/forms';
 import { Storage } from '@ionic/storage-angular';
 import { Share } from '@capacitor/share';
@@ -11,6 +12,7 @@ import { RouterLink } from '@angular/router';
 export interface Item  {
   name: string;
   qty: number | null;
+  category: string | null;
   desc?: string;
 }
 
@@ -18,11 +20,13 @@ export interface Item  {
   selector: 'app-tab1',
   templateUrl: 'tab1.page.html',
   styleUrls: ['tab1.page.scss'],
-  imports: [IonFab, IonIcon, IonFabButton, IonFabList, IonSearchbar, IonAlert, IonText, FormsModule, IonHeader,
+  imports: [IonFab, IonIcon, IonFabButton, IonFabList, IonSearchbar,
+    IonAlert, IonText, FormsModule, IonHeader,
     IonContent, IonLabel, IonSegment,
     IonSegmentButton, IonSegmentView,
     IonSegmentContent, IonList, IonItem, IonInput,
-    IonButton, IonModal, IonButtons, IonToolbar, RouterLink],
+    IonButton, IonModal, IonButtons, IonToolbar, RouterLink,
+    IonSelect, IonSelectOption],
 })
 
 export class Tab1Page {
@@ -31,10 +35,11 @@ export class Tab1Page {
   itemName: string = "";
   itemQty: number | null = null;
   itemDesc?: string = "";
+  itemCategory: string | null = "";
   isQuantityAlert: boolean = false;
   isItemModalOpen: boolean = false;
   isEditingItem: boolean = false;
-  activeItem: Item = {"name": "", "qty": 0, "desc": ""};
+  activeItem: Item = {"name": "", "qty": 0, "category": "","desc": ""};
   items: Item[] = [];
   filteredItems: Item[] = [];
   itemCount:number = this.items.length;
@@ -58,6 +63,7 @@ export class Tab1Page {
     }
   ];
   darkMode: boolean = false;
+  categories: string[] = ['Select category','Rations', 'Medical', 'Armory', 'Gear']
   
   constructor(private storage: Storage) {}
   
@@ -76,7 +82,7 @@ export class Tab1Page {
       this.isQuantityAlert = true;
       return;
     }
-    this.items.push({"name": this.itemName, "qty": this.itemQty, "desc": this.itemDesc});    
+    this.items.push({"name": this.itemName, "qty": this.itemQty, "desc": this.itemDesc, "category": this.itemCategory});    
     this.items.sort((a, b) => a.name.localeCompare(b.name));
     this.filteredItems = this.items;
     this.itemCount++;
@@ -85,6 +91,7 @@ export class Tab1Page {
     this.itemName = "";
     this.itemQty = null;
     this.itemDesc = "";
+    this.itemCategory = null;
   }
 
   setResult = () => {
