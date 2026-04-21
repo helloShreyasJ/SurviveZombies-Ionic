@@ -5,6 +5,7 @@ import { Geolocation } from '@capacitor/geolocation';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { SafeZoneService } from '../services/safe-zone-service';
 import { Storage } from '@ionic/storage-angular';
+import { Share } from '@capacitor/share';
 import { environment } from 'src/environments/environment';
 
 @Component({
@@ -30,7 +31,7 @@ export class Tab2Page {
   currentLat: number = 0.000;
   currentLng: number = 0.000;
   darkMode: boolean = false;
-
+  
   constructor(private service: SafeZoneService, private storage: Storage) {}
 
   async ngOnInit() {
@@ -42,7 +43,14 @@ export class Tab2Page {
 
   ngAfterViewInit() { 
     this.createMap();
-  } 
+  }
+
+  async ngOnDestroy() {
+    if (this.map) {
+      await this.map.destroy();
+      this.map = undefined;
+    }
+  }
 
   createMap = async() => {
     let apiKey = await this.storage.get('api_key'); 
@@ -192,7 +200,37 @@ export class Tab2Page {
     }
   }
   
-  applyTheme(isDark: boolean) {
+  applyTheme = (isDark: boolean) => {
     document.body.classList.toggle('ion-palette-dark', isDark);
+  }
+
+  formatOutput = ():string => {
+    let message: string = "";
+    let markers = Object.values(this.markerTracker);
+
+    markers.forEach((pin, index) => {
+      let formattedLat = pin.lat;
+      let formattedLng = pin.lng;
+
+      if (pin.state === 'danger') {
+        message += `\nDanger Marker | [${formattedLat}, ${formattedLng}]\n`;
+      } else {
+        message += `\nBenign Marker | [${formattedLat}, ${formattedLng}]\n`;
+      }
+    });
+    return message;
+  }
+
+  startShareProcess = async () => {
+    const markerCoordinates = this.formatOutput();
+
+    try {
+      await Share.share({
+        title: `Marker Coordinatates\n`,
+        text: markerCoordinates,
+      });
+    } catch (error) {
+      console.log(error);
+    }
   }
 }

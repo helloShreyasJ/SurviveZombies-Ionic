@@ -177,6 +177,7 @@ export class Tab1Page {
 
   shareDismiss = async (event: any) => {
     this.isUserAlert = false;
+    
     if (event.detail.role === 'confirm') {      
       const typedName = event.detail.data.values.survivorName;  
       if (typedName) {
