@@ -7,3 +7,12 @@ capacitor-google-map {
   width: 100%;
   height: 100%;
 }
+
+#share-markers-button {
+  position: absolute;
+  bottom: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  --box-shadow: none;
+}
