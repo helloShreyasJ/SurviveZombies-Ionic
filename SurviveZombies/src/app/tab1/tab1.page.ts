@@ -8,6 +8,7 @@ import { FormsModule } from '@angular/forms';
 import { Storage } from '@ionic/storage-angular';
 import { Share } from '@capacitor/share';
 import { RouterLink } from '@angular/router';
+import { save } from 'ionicons/icons';
 
 export interface Item  {
   name: string;
@@ -37,6 +38,7 @@ export class Tab1Page {
   itemDesc?: string = "";
   itemCategory: string | null = "";
   isQuantityAlert: boolean = false;
+  isEntryEmpty: boolean = false;
   isItemModalOpen: boolean = false;
   isEditingItem: boolean = false;
   activeItem: Item = {"name": "", "qty": 0, "category": "","desc": ""};
@@ -76,12 +78,23 @@ export class Tab1Page {
   }
 
   addToStock = () => {
+    
+    if (!this.itemName || !this.itemCategory) {
+      this.isEntryEmpty = true;
+      return;
+    }
+
     if (this.itemQty == null) return;
 
     if (this.itemQty <= 0) {
       this.isQuantityAlert = true;
       return;
     }
+
+    if (this.itemCategory == null) {
+
+    }
+
     this.items.push({"name": this.itemName, "qty": this.itemQty, "desc": this.itemDesc, "category": this.itemCategory});    
     this.items.sort((a, b) => a.name.localeCompare(b.name));
     this.filteredItems = this.items;
@@ -96,6 +109,7 @@ export class Tab1Page {
 
   setResult = () => {
     this.isQuantityAlert = false;
+    this.isEntryEmpty = false;
   }
 
   openItemModal = (selectedItem: Item) => {
@@ -129,7 +143,8 @@ export class Tab1Page {
   }
 
   loadInventory = async() => {
-    const savedItems = await this.storage.get('items');
+    let savedItems = await this.storage.get('items');
+    console.log(savedItems);
     if (savedItems) {
       this.items = savedItems;
       this.items.sort((a, b) => a.name.localeCompare(b.name));
@@ -152,7 +167,7 @@ export class Tab1Page {
   formatOutput = ():string => {
     let message: string = "";
     this.items.forEach(i => {
-      message += `\n${i.name} (Qty: ${i.qty})\n`;
+      message += `\n${i.name} (Qty: ${i.qty}) | ${i.category}\n`;
       if (i.desc) {
         message += `Notes: ${i.desc}\n`;
       }

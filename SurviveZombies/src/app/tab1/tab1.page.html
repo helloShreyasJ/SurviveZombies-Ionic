@@ -38,9 +38,6 @@
         <ion-item>
           <ion-input label="Quantity" type="number" placeholder="Enter quantity" labelPlacement="stacked" [clearInput]="true" [(ngModel)]="itemQty"></ion-input>
         </ion-item>
-        <ion-item>
-          <ion-input label="Description" placeholder="Enter description" labelPlacement="stacked" [clearInput]="true" [(ngModel)]="itemDesc"></ion-input>
-        </ion-item>
         <ion-item class="category-container" lines="none">
           <ion-label class="category-header">Category</ion-label>
           <ion-select aria-label="Category" interface="popover" placeholder="Select category" [(ngModel)]="itemCategory">
@@ -48,6 +45,9 @@
               <ion-select-option [value]=category>{{category}}</ion-select-option>
             }
           </ion-select>
+        </ion-item>
+        <ion-item>
+          <ion-input label="Description" placeholder="Enter description" labelPlacement="stacked" [clearInput]="true" [(ngModel)]="itemDesc"></ion-input>
         </ion-item>
       <ion-button id="add-stock-button" (click)="addToStock()">ADD TO STOCK</ion-button>
       </div>
@@ -58,6 +58,14 @@
     [isOpen]="isQuantityAlert"
     header="Invalid Entry"
     message="Quantity should be greater than 0"
+    [buttons]="alertButtons"
+    (didDismiss)="setResult()"
+  ></ion-alert>
+
+  <ion-alert
+    [isOpen]="isEntryEmpty"
+    header="Invalid Entry"
+    message="Fill out item details"
     [buttons]="alertButtons"
     (didDismiss)="setResult()"
   ></ion-alert>
