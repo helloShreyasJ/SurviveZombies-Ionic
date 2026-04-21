@@ -36,12 +36,19 @@
           <ion-input label="Name" placeholder="Enter name" labelPlacement="stacked" [clearInput]="true" [(ngModel)]="itemName"></ion-input>
         </ion-item>
         <ion-item>
-          <ion-input label="Quantity" placeholder="Enter quantity" labelPlacement="stacked" [clearInput]="true" [(ngModel)]="itemQty"></ion-input>
+          <ion-input label="Quantity" type="number" placeholder="Enter quantity" labelPlacement="stacked" [clearInput]="true" [(ngModel)]="itemQty"></ion-input>
+        </ion-item>
+        <ion-item class="category-container" lines="none">
+          <ion-label class="category-header">Category</ion-label>
+          <ion-select aria-label="Category" interface="popover" placeholder="Select category" [(ngModel)]="itemCategory">
+            @for (category of categories; track category) {
+              <ion-select-option [value]=category>{{category}}</ion-select-option>
+            }
+          </ion-select>
         </ion-item>
         <ion-item>
           <ion-input label="Description" placeholder="Enter description" labelPlacement="stacked" [clearInput]="true" [(ngModel)]="itemDesc"></ion-input>
         </ion-item>
-
       <ion-button id="add-stock-button" (click)="addToStock()">ADD TO STOCK</ion-button>
       </div>
     </ion-segment-content>
@@ -51,6 +58,14 @@
     [isOpen]="isQuantityAlert"
     header="Invalid Entry"
     message="Quantity should be greater than 0"
+    [buttons]="alertButtons"
+    (didDismiss)="setResult()"
+  ></ion-alert>
+
+  <ion-alert
+    [isOpen]="isEntryEmpty"
+    header="Invalid Entry"
+    message="Fill out item details"
     [buttons]="alertButtons"
     (didDismiss)="setResult()"
   ></ion-alert>
@@ -89,10 +104,9 @@
       </ion-header>
 
       <ion-content class="ion-padding">
-        <h2>{{activeItem.name}}</h2>
-        <p>{{activeItem.desc}}</p>
-
-        
+        <h2>{{activeItem.name}} (x{{activeItem.qty}})</h2>
+        <p>Note: {{activeItem.desc}}</p>
+        <p>Item category: {{activeItem.category}}</p>
 
         <div class="form-wrapper">
           @if (!isEditingItem) {
@@ -109,6 +123,15 @@
             <ion-item>
               <ion-input placeholder="Description" labelPlacement="stacked" [(ngModel)]="activeItem.desc"></ion-input>
             </ion-item>
+            <ion-item class="category-container" lines="none">
+              <ion-label class="category-header">Category</ion-label>
+              <ion-select aria-label="Category" interface="popover" placeholder="Select category" [(ngModel)]="activeItem.category">
+                @for (category of categories; track category) {
+                  <ion-select-option [value]=category>{{category}}</ion-select-option>
+                }
+              </ion-select>
+            </ion-item>
+
             <ion-button id="save-changes-button" expand="block" (click)="editDetails()">SAVE CHANGES</ion-button>
           }
           <ion-button id="remove-item-button" expand="block" (click)="removeItem()">REMOVE ITEM</ion-button>

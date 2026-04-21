@@ -2,15 +2,18 @@ import { Component } from '@angular/core';
 import { IonButton, IonList, IonItem, IonSegmentContent, IonSegmentView,
           IonLabel, IonSegment, IonSegmentButton, IonHeader,
           IonToolbar, IonContent, IonInput, IonText,
-          IonAlert, IonModal, IonButtons, IonSearchbar, IonFabList, IonFabButton, IonIcon, IonFab } from '@ionic/angular/standalone';
+          IonAlert, IonModal, IonButtons, IonSearchbar, IonFabList, IonFabButton,
+          IonIcon, IonFab, IonSelect, IonSelectOption } from '@ionic/angular/standalone';
 import { FormsModule } from '@angular/forms';
 import { Storage } from '@ionic/storage-angular';
 import { Share } from '@capacitor/share';
 import { RouterLink } from '@angular/router';
+import { save } from 'ionicons/icons';
 
 export interface Item  {
   name: string;
   qty: number | null;
+  category: string | null;
   desc?: string;
 }
 
@@ -18,11 +21,13 @@ export interface Item  {
   selector: 'app-tab1',
   templateUrl: 'tab1.page.html',
   styleUrls: ['tab1.page.scss'],
-  imports: [IonFab, IonIcon, IonFabButton, IonFabList, IonSearchbar, IonAlert, IonText, FormsModule, IonHeader,
+  imports: [IonFab, IonIcon, IonFabButton, IonFabList, IonSearchbar,
+    IonAlert, IonText, FormsModule, IonHeader,
     IonContent, IonLabel, IonSegment,
     IonSegmentButton, IonSegmentView,
     IonSegmentContent, IonList, IonItem, IonInput,
-    IonButton, IonModal, IonButtons, IonToolbar, RouterLink],
+    IonButton, IonModal, IonButtons, IonToolbar, RouterLink,
+    IonSelect, IonSelectOption],
 })
 
 export class Tab1Page {
@@ -31,10 +36,12 @@ export class Tab1Page {
   itemName: string = "";
   itemQty: number | null = null;
   itemDesc?: string = "";
+  itemCategory: string | null = "";
   isQuantityAlert: boolean = false;
+  isEntryEmpty: boolean = false;
   isItemModalOpen: boolean = false;
   isEditingItem: boolean = false;
-  activeItem: Item = {"name": "", "qty": 0, "desc": ""};
+  activeItem: Item = {"name": "", "qty": 0, "category": "","desc": ""};
   items: Item[] = [];
   filteredItems: Item[] = [];
   itemCount:number = this.items.length;
@@ -58,6 +65,7 @@ export class Tab1Page {
     }
   ];
   darkMode: boolean = false;
+  categories: string[] = ['Select category','Rations', 'Medical', 'Armory', 'Gear']
   
   constructor(private storage: Storage) {}
   
@@ -70,13 +78,24 @@ export class Tab1Page {
   }
 
   addToStock = () => {
+    
+    if (!this.itemName || !this.itemCategory) {
+      this.isEntryEmpty = true;
+      return;
+    }
+
     if (this.itemQty == null) return;
 
     if (this.itemQty <= 0) {
       this.isQuantityAlert = true;
       return;
     }
-    this.items.push({"name": this.itemName, "qty": this.itemQty, "desc": this.itemDesc});    
+
+    if (this.itemCategory == null) {
+
+    }
+
+    this.items.push({"name": this.itemName, "qty": this.itemQty, "desc": this.itemDesc, "category": this.itemCategory});    
     this.items.sort((a, b) => a.name.localeCompare(b.name));
     this.filteredItems = this.items;
     this.itemCount++;
@@ -85,10 +104,12 @@ export class Tab1Page {
     this.itemName = "";
     this.itemQty = null;
     this.itemDesc = "";
+    this.itemCategory = null;
   }
 
   setResult = () => {
     this.isQuantityAlert = false;
+    this.isEntryEmpty = false;
   }
 
   openItemModal = (selectedItem: Item) => {
@@ -122,7 +143,8 @@ export class Tab1Page {
   }
 
   loadInventory = async() => {
-    const savedItems = await this.storage.get('items');
+    let savedItems = await this.storage.get('items');
+    console.log(savedItems);
     if (savedItems) {
       this.items = savedItems;
       this.items.sort((a, b) => a.name.localeCompare(b.name));
@@ -145,7 +167,7 @@ export class Tab1Page {
   formatOutput = ():string => {
     let message: string = "";
     this.items.forEach(i => {
-      message += `\n${i.name} (Qty: ${i.qty})\n`;
+      message += `\n${i.name} (Qty: ${i.qty}) | ${i.category}\n`;
       if (i.desc) {
         message += `Notes: ${i.desc}\n`;
       }
