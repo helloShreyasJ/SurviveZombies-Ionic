@@ -4,6 +4,7 @@ ion-content {
 
 ion-button {
   --box-shadow: none;
+  --background-activated: var(--ion-color-step-100, #1A751B);
 }
 
 #settings-header {

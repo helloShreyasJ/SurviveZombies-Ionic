@@ -15,4 +15,5 @@ capacitor-google-map {
   transform: translateX(-50%);
   z-index: 10;
   --box-shadow: none;
+  --background-activated: var(--ion-color-step-100, #1A751B);
 }

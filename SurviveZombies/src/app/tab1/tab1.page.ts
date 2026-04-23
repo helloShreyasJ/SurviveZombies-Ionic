@@ -8,7 +8,6 @@ import { FormsModule } from '@angular/forms';
 import { Storage } from '@ionic/storage-angular';
 import { Share } from '@capacitor/share';
 import { RouterLink } from '@angular/router';
-import { save } from 'ionicons/icons';
 
 export interface Item  {
   name: string;

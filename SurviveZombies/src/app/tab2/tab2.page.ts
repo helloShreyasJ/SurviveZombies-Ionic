@@ -6,7 +6,6 @@ import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { SafeZoneService } from '../services/safe-zone-service';
 import { Storage } from '@ionic/storage-angular';
 import { Share } from '@capacitor/share';
-import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-tab2',
